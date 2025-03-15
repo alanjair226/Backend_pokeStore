@@ -1,5 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Pokeball } from "src/pokeballs/entities/pokeball.entity";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Pokemon {
@@ -18,10 +17,4 @@ export class Pokemon {
 
     @Column({ type: "decimal" })
     base_price: number;
-
-    @ManyToOne(() => Pokeball, { nullable: false })
-    pokeball: Pokeball;
-
-    @Column({ type: "decimal" })
-    final_price: number;
 }
