@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    container_name: pika_store
+    environment:
+      DATABASE_HOST: 127.0.0.1
+      POSTGRES_USER: alan
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: pika_store
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
