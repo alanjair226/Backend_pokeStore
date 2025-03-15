@@ -12,16 +12,16 @@ export class User {
     @Column()
     username: string;
 
-    @Column({ nullable:false })
+    @Column({ nullable:false, select:false })
     password: string;
 
-    @Column({ unique: true, nullable:false })
+    @Column({ unique: true, nullable:false})
     email: string;
 
-    @Column({ default: 'user' })
+    @Column({ default: 'user', select: false })
     role: string;
 
-    @DeleteDateColumn()
+    @DeleteDateColumn({ select: false })
     deletedAt: Date;
 
     @OneToOne(() => Cart, cart => cart.user)

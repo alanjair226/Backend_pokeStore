@@ -7,7 +7,11 @@ export class Cart {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(() => User, user => user.cart, { onDelete: 'CASCADE' })
+    @OneToOne(() => User, user => user.cart, 
+    { 
+        onDelete: 'CASCADE',
+        eager: true
+    })
     @JoinColumn()
     user: User;
 

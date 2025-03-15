@@ -5,6 +5,7 @@ import { RegisterDto } from './dto/register.dto';
 import * as bcryptjs from 'bcryptjs'
 import { LoginDto } from 'src/auth/dto/login.dto';
 import { JwtService } from '@nestjs/jwt'
+import { CartService } from 'src/cart/cart.service';
 
 
 @Injectable()
@@ -12,6 +13,7 @@ export class AuthService {
 
     constructor(
         private readonly usersService: UsersService,
+        private readonly cartService: CartService,
         private readonly jwtService: JwtService
     ){}
 
@@ -23,14 +25,16 @@ export class AuthService {
             throw new BadRequestException("User already exists")
         }
 
-        await this.usersService.create({
+        const registeredUser = await this.usersService.create({
             username,
             email,
             password: await bcryptjs.hash(password, 10)
         });
 
+        await this.cartService.create({ user: registeredUser.id})
+
         return {
-            username, email
+            registeredUser
         }
     }
     
