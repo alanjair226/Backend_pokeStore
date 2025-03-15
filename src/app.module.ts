@@ -2,6 +2,11 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { CartModule } from './cart/cart.module';
+import { PokemonModule } from './pokemon/pokemon.module';
+import { PokeballsModule } from './pokeballs/pokeballs.module';
+import { OrdersModule } from './orders/orders.module';
+import { CardsModule } from './cards/cards.module';
 require('dotenv').config();
 
 @Module({
@@ -18,6 +23,11 @@ require('dotenv').config();
       synchronize: true,
     }),
     AuthModule,
+    CartModule,
+    PokemonModule,
+    PokeballsModule,
+    OrdersModule,
+    CardsModule,
   ],
   controllers: [],
   providers: [],
