@@ -35,16 +35,4 @@ export class AuthController {
         return this.authService.login(loginDto);
     }
 
-    @Get('profile')
-    @Auth([Role.ADMIN, Role.USER])
-    profile(
-        @ Req() 
-        req: RequestWithUser,
-    ){
-        return this.authService.profile({
-            email: req.user.email,
-            role: req.user.role
-        })
-    }
-
 }
