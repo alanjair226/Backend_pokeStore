@@ -9,7 +9,7 @@ export class CartItem {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Cart, cart => cart.items, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Cart, cart => cart.items)
     cart: Cart;
 
     @ManyToOne(() => Pokemon, { eager: true })
@@ -17,6 +17,9 @@ export class CartItem {
 
     @ManyToOne(() => Pokeball, { eager: true })
     pokeball: Pokeball;
+
+    @Column({ default: 1 })
+    quantity: number; 
 
     @Column({ type: "decimal" })
     price: number;

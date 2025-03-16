@@ -22,8 +22,8 @@ export class PokemonService {
   }
 
   async findAllPagination(
-    page: number = 1,
-    limit: number = 20,
+    page: number,
+    limit: number,
     type?: string,
     category?: string
   ) {

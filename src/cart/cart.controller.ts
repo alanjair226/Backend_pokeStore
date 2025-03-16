@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, Delete, Param, Patch } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
 
 @Controller('cart')
 export class CartController {
-  constructor(private readonly cartService: CartService) {}
+    constructor(private readonly cartService: CartService) {}
 
-  @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartService.create(createCartDto);
-  }
+    // 🔹 Obtener el carrito de un usuario
+    @Get(':userId')
+    async getCart(@Param('userId') userId: number) {
+        return this.cartService.getCart(userId);
+    }
 
-  @Get()
-  findAll() {
-    return this.cartService.findAll();
-  }
+    // 🔹 Agregar un Pokémon al carrito
+    @Post('add')
+    async addToCart(@Body() body: { userId: number, pokemonId: number, pokeballId?: number, quantity?: number }) {
+        return this.cartService.addToCart(body.userId, body.pokemonId, body.pokeballId, body.quantity || 1);
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartService.findOne(+id);
-  }
+    @Patch('update-item')
+async updateCartItem(@Body() body: { userId: number, cartItemId: number, newQuantity?: number, newPokeballId?: number }) {
+    return this.cartService.updateCartItem(body.userId, body.cartItemId, body.newQuantity, body.newPokeballId);
+}
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartService.update(+id, updateCartDto);
-  }
+    // 🔹 Eliminar un Pokémon del carrito
+    @Delete('remove')
+    async removeFromCart(@Body() body: { userId: number, cartItemId: number }) {
+        return this.cartService.removeFromCart(body.userId, body.cartItemId);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(+id);
-  }
+    // 🔹 Vaciar el carrito
+    @Delete('clear/:userId')
+    async clearCart(@Param('userId') userId: number) {
+        return this.cartService.clearCart(userId);
+    }
 }
