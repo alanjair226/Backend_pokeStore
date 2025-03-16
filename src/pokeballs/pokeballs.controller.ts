@@ -27,8 +27,4 @@ export class PokeballsController {
     return this.pokeballsService.update(+id, updatePokeballDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pokeballsService.remove(+id);
-  }
 }

@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePokeballDto } from './dto/create-pokeball.dto';
 import { UpdatePokeballDto } from './dto/update-pokeball.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Pokeball } from './entities/pokeball.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PokeballsService {
-  create(createPokeballDto: CreatePokeballDto) {
-    return 'This action adds a new pokeball';
+
+  constructor(
+    @InjectRepository(Pokeball)
+    private readonly pokeballRepository: Repository<Pokeball>
+  ){}
+
+  async create(createPokeballDto: CreatePokeballDto) {
+    return await this.pokeballRepository.save(createPokeballDto);
   }
 
-  findAll() {
-    return `This action returns all pokeballs`;
+  async findAll() {
+    return await this.pokeballRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pokeball`;
+  async findOne(id: number) {
+    return await this.pokeballRepository.findOneBy({id});
   }
 
-  update(id: number, updatePokeballDto: UpdatePokeballDto) {
-    return `This action updates a #${id} pokeball`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} pokeball`;
+  async update(id: number, updatePokeballDto: UpdatePokeballDto) {
+    return await this.pokeballRepository.update(id, updatePokeballDto) ;
   }
 }

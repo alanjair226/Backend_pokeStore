@@ -1,26 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Pokemon } from './entities/pokemon.entity';
 
 @Injectable()
 export class PokemonService {
-  create(createPokemonDto: CreatePokemonDto) {
-    return 'This action adds a new pokemon';
+
+  constructor(
+    @InjectRepository(Pokemon)
+    private readonly pokemonRepository: Repository<Pokemon>
+  ) {}
+
+  async create(createPokemonDto: CreatePokemonDto) {
+    return await this.pokemonRepository.save(createPokemonDto);
   }
 
-  findAll() {
-    return `This action returns all pokemon`;
+  async findAll() {
+    return await this.pokemonRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pokemon`;
+  async findOne(id: number) {
+    return await this.pokemonRepository.findOneBy({ id });
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`;
+  async update(id: number, updatePokemonDto: UpdatePokemonDto) {
+    return await this.pokemonRepository.update(id, updatePokemonDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  async remove(id: number) {
+    return await this.pokemonRepository.delete(id);
   }
 }

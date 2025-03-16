@@ -7,6 +7,7 @@ import { PokemonModule } from './pokemon/pokemon.module';
 import { PokeballsModule } from './pokeballs/pokeballs.module';
 import { OrdersModule } from './orders/orders.module';
 import { CardsModule } from './cards/cards.module';
+import { SeedersModule } from './seeders/seeders.module';
 require('dotenv').config();
 
 @Module({
@@ -28,6 +29,7 @@ require('dotenv').config();
     PokeballsModule,
     OrdersModule,
     CardsModule,
+    SeedersModule,
   ],
   controllers: [],
   providers: [],
