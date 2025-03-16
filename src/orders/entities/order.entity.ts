@@ -1,5 +1,7 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from "typeorm";
 import { User } from "src/users/entities/user.entity";
+import { OrderItem } from "./order-item.entity";
+import { Card } from "src/cards/entities/card.entity";
 
 @Entity()
 export class Order {
@@ -7,15 +9,18 @@ export class Order {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, user => user.orders, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, user => user.orders)
     user: User;
 
-    @Column({ type: 'jsonb', default: [] })
-    items: { pokemon_id: number, name: string, sprite: string, price: number, pokeball: string }[];
+    @ManyToOne(() => Card, { nullable: false })
+    card: Card;
+
+    @OneToMany(() => OrderItem, orderItem => orderItem.order, { cascade: true })
+    items: OrderItem[];
 
     @Column({ type: "decimal" })
     total_price: number;
-
+    
     @CreateDateColumn()
     createdAt: Date;
 }
