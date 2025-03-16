@@ -12,6 +12,6 @@ export class Cart {
     @JoinColumn()
     user: User;
 
-    @OneToMany(() => CartItem, cartItem => cartItem.cart, { cascade: true })
+    @OneToMany(() => CartItem, cartItem => cartItem.cart, { cascade: true, eager: true })
     items: CartItem[];
 }
