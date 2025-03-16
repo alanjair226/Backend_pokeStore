@@ -28,7 +28,7 @@ export class CartService {
 
   // 🔹 Obtener el carrito de un usuario con sus items
   async getCart(userId: number) {
-      return await validate(userId, 'id', this.cartRepository);
+      return await validate(userId, 'user', this.cartRepository);
   }
 
   // 🔹 Obtener todos los carritos (solo para pruebas/debug)
