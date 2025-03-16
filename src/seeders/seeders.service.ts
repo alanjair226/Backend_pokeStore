@@ -94,7 +94,6 @@ export class SeedersService {
     return { message: 'Todos los Pokémon fueron insertados/actualizados correctamente.' };
 }
 
-// 🔹 Procesar cada Pokémon
 private async processPokemon(details) {
     try {
         const speciesUrl = details.species.url;
@@ -104,6 +103,11 @@ private async processPokemon(details) {
         const statsTotal = details.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
         const isLegendary = speciesDetails.data.is_legendary;
         const isMythical = speciesDetails.data.is_mythical;
+
+        // Definir categoría
+        let category = "normal";
+        if (isLegendary) category = "legendary";
+        if (isMythical) category = "mythical";
 
         // Cálculo del precio basado en factores
         let price = (baseExperience * 0.1) + (statsTotal / 10);
@@ -121,15 +125,15 @@ private async processPokemon(details) {
             name: details.name,
             sprite: details.sprites.front_default,
             types: details.types.map(t => t.type.name),
-            base_price: parseFloat(price.toFixed(2))
+            base_price: parseFloat(price.toFixed(2)),
+            category
         });
 
         await this.pokemonRepository.save(newPokemon);
-        console.log(`🆕 Insertado: ${details.name} -> Precio: $${price.toFixed(2)} USD`);
+        console.log(`🆕 Insertado: ${details.name} -> Categoría: ${category} -> Precio: $${price.toFixed(2)} USD`);
 
     } catch (error) {
         console.error(`❌ Error procesando ${details.name}:`, error.message);
     }
 }
-
 }

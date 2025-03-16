@@ -17,4 +17,7 @@ export class Pokemon {
 
     @Column({ type: "decimal" })
     base_price: number;
+
+    @Column({ default: "normal" })
+    category: string; 
 }
