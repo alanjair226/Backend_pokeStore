@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, DeleteDateColumn } from "typeorm";
 import { User } from "src/users/entities/user.entity";
 
 @Entity()
@@ -14,11 +14,11 @@ export class Card {
     card_number: string;
 
     @Column()
-    cardholder_name: string;
-
-    @Column()
     expiration_date: string;
 
     @Column()
-    cvv: string;
+    cardholder_name: string;
+
+    @DeleteDateColumn()
+    deletedAt?: Date;
 }
