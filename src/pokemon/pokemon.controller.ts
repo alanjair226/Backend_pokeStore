@@ -46,10 +46,4 @@ export class PokemonController {
   update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {
     return this.pokemonService.update(+id, updatePokemonDto);
   }
-
-  @Auth([Role.ADMIN])
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pokemonService.remove(+id);
-  }
 }
