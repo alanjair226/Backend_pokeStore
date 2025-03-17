@@ -29,14 +29,10 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    return this.userRepository.findOneBy({id});
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    return this.userRepository.softDelete({id});
   }
 }
