@@ -23,7 +23,6 @@ export class AuthController {
         @Body()
         registerDto: RegisterDto
     ){
-        console.log(registerDto)
         return this.authService.register(registerDto);
     }
     
