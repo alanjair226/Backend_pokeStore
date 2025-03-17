@@ -32,12 +32,10 @@ export class PokemonService {
 
     const query = this.pokemonRepository.createQueryBuilder("pokemon");
 
-    // 🔥 Filtro por tipo (solo si se proporciona)
     if (type) {
       query.andWhere(":type = ANY (pokemon.types)", { type });
     }
 
-    // 🔥 Filtro por categoría (legendary, mythical, normal)
     if (category) {
       query.andWhere("pokemon.category = :category", { category });
     }

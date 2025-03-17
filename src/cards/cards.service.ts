@@ -14,26 +14,22 @@ export class CardsService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  // 🔹 Crear una tarjeta
   async create(createCardDto: CreateCardDto) {
     const user = await validate(createCardDto.user, 'id', this.userRepository);
 
-    // 🔥 Buscar si ya existe una tarjeta con el mismo número y usuario (incluyendo soft deleted)
     const existingCard = await this.cardRepository.findOne({
         where: { card_number: createCardDto.card_number, user: { id: user.id } },
-        withDeleted: true // 🔥 Incluye tarjetas eliminadas
+        withDeleted: true 
     });
 
     if (existingCard) {
         if (existingCard.deletedAt) {
-            // 🔥 Restaurar la tarjeta si estaba eliminada
             await this.cardRepository.restore(existingCard.id);
-            return { message: "Tarjeta restaurada con éxito", card: existingCard };
+            return { message: "Card successfully restored", card: existingCard };
         }
-        return { message: "Ya existe una tarjeta con este número para el usuario", card: existingCard };
+        return { message: "A card with this number already exists for the user", card: existingCard };
     }
 
-    // 🔥 Si no existe, crear una nueva tarjeta
     const newCard = this.cardRepository.create({
         user,
         card_number: createCardDto.card_number,
@@ -42,37 +38,31 @@ export class CardsService {
     });
 
     return await this.cardRepository.save(newCard);
-}
+  }
 
-
-  // 🔹 Obtener todas las tarjetas de un usuario
   async findAll(userId: number) {
     await validate(userId, 'id', this.userRepository);
     return await this.cardRepository.find({ where: { user: { id: userId } } });
   }
 
-  // 🔹 Obtener una tarjeta específica
   async findOne(id: number) {
     return await validate(id, 'id', this.cardRepository);
   }
 
-  // 🔹 Actualizar una tarjeta
   async update(id: number, updateCardDto: UpdateCardDto) {
     await validate(id, 'id', this.cardRepository);
     await this.cardRepository.update(id, updateCardDto);
     return this.findOne(id);
   }
 
-  // 🔹 Eliminar una tarjeta (soft delete)
   async remove(id: number) {
     const card = await validate(id, 'id', this.cardRepository);
     await this.cardRepository.softRemove(card);
-    return { message: "Tarjeta eliminada correctamente (soft delete)" };
+    return { message: "Card successfully deleted (soft delete)" };
   }
 
-  // 🔹 Restaurar una tarjeta eliminada
   async restore(id: number) {
     await this.cardRepository.restore(id);
-    return { message: "Tarjeta restaurada correctamente" };
+    return { message: "Card successfully restored" };
   }
 }

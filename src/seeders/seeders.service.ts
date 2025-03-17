@@ -4,7 +4,6 @@ import { Pokeball } from 'src/pokeballs/entities/pokeball.entity';
 import { Repository } from 'typeorm';
 import { Pokemon } from 'src/pokemon/entities/pokemon.entity';
 import axios from 'axios';
-import { url } from 'inspector';
 
 const urlPokeAPI = 'https://pokeapi.co/api/v2/'
 
@@ -16,8 +15,7 @@ export class SeedersService {
     private readonly pokeballRepository: Repository<Pokeball>,
     @InjectRepository(Pokemon)
     private readonly pokemonRepository: Repository<Pokemon>
-  ){}
-
+  ) {}
 
   async pokeballSeeder() {
     const response = await axios.get(`${urlPokeAPI}item-category/34/`);
@@ -38,19 +36,19 @@ export class SeedersService {
 
         const catchRateMultiplier = multipliers[data.name] || 1.0;
 
-        // Buscar si la Pokébola ya existe
+        // Check if the Pokéball already exists
         const existingPokeball = await this.pokeballRepository.findOne({ where: { name: data.name } });
 
         if (existingPokeball) {
-            // Si el catch_rate_multiplier es diferente, lo actualizamos
+            // If the catch_rate_multiplier is different, update it
             if (existingPokeball.catch_rate_multiplier !== catchRateMultiplier) {
                 await this.pokeballRepository.update(existingPokeball.id, { catch_rate_multiplier: catchRateMultiplier });
-                console.log(`✔️ Actualizado: ${data.name} -> Nuevo multiplicador: ${catchRateMultiplier}`);
+                console.log(`✔️ Updated: ${data.name} -> New Multiplier: ${catchRateMultiplier}`);
             } else {
-                console.log(`✅ Sin cambios: ${data.name} ya tiene el multiplicador correcto.`);
+                console.log(`✅ No Changes: ${data.name} already has the correct multiplier.`);
             }
         } else {
-            // Si no existe, insertamos la nueva Pokébola
+            // If it doesn't exist, insert the new Pokéball
             const pokeball = this.pokeballRepository.create({
                 name: data.name,
                 sprite: data.sprites.default,
@@ -58,26 +56,26 @@ export class SeedersService {
             });
 
             await this.pokeballRepository.save(pokeball);
-            console.log(`🆕 Insertado: ${data.name} -> Multiplicador: ${catchRateMultiplier}`);
+            console.log(`🆕 Inserted: ${data.name} -> Multiplier: ${catchRateMultiplier}`);
         }
     }
 
-    return { message: 'Pokébolas insertadas/actualizadas correctamente.' };
+    return { message: 'Pokeballs Inserted' };
   }
 
   async pokemonSeeder(batchSize: number = 50) {
-    const response = await axios.get(`${urlPokeAPI}pokemon?limit=100000`); // Obtener todos los Pokémon en una sola petición
+    const response = await axios.get(`${urlPokeAPI}pokemon?limit=100000`); // Get all Pokemons in one request
     const pokemonList = response.data.results;
 
-    console.log(`📥 Se importarán ${pokemonList.length} Pokémon en lotes de ${batchSize}...`);
+    console.log(`📥 It will import ${pokemonList.length} Pokemons in batches of ${batchSize}...`);
 
-    // Dividimos los Pokémon en lotes de `batchSize`
+    // Split Pokémon into batches of `batchSize`
     for (let i = 0; i < pokemonList.length; i += batchSize) {
         const batch = pokemonList.slice(i, i + batchSize);
 
-        console.log(`🔄 Procesando lote: ${i} - ${i + batchSize}...`);
+        console.log(`🔄 Processing Batch ${i} - ${i + batchSize}...`);
 
-        // Hacemos todas las peticiones en paralelo para el lote actual
+        // Make all requests in parallel for the current batch
         const batchRequests = batch.map(pokemon => axios.get(pokemon.url));
         const batchResponses = await Promise.allSettled(batchRequests);
 
@@ -85,16 +83,16 @@ export class SeedersService {
             if (result.status === 'fulfilled') {
                 await this.processPokemon(result.value.data);
             } else {
-                console.error(`❌ Error en una petición del lote:`, result.reason);
+                console.error(`❌ Error batch request`, result.reason);
             }
         }
     }
 
-    console.log(`✅ ¡Importación completada!`);
-    return { message: 'Todos los Pokémon fueron insertados/actualizados correctamente.' };
-}
+    console.log(`✅ Import Completed!`);
+    return { message: 'Pokemons Inserted / Updated' };
+  }
 
-private async processPokemon(details) {
+  private async processPokemon(details) {
     try {
         const speciesUrl = details.species.url;
         const speciesDetails = await axios.get(speciesUrl);
@@ -104,20 +102,20 @@ private async processPokemon(details) {
         const isLegendary = speciesDetails.data.is_legendary;
         const isMythical = speciesDetails.data.is_mythical;
 
-        // Definir categoría
+        // Define Category
         let category = "normal";
         if (isLegendary) category = "legendary";
         if (isMythical) category = "mythical";
 
-        // Cálculo del precio basado en factores
+        // Price Calculate
         let price = (baseExperience * 0.1) + (statsTotal / 10);
         if (isLegendary || isMythical) price += 200;
 
-        // Verificar si el Pokémon ya existe
+        // Verify Pokemon
         const existingPokemon = await this.pokemonRepository.findOne({ where: { name: details.name } });
 
         if (existingPokemon) {
-            console.log(`✅ ${details.name} ya está en la BD, saltando...`);
+            console.log(`✅ ${details.name} already exists in the database, skipping...`);
             return;
         }
 
@@ -130,10 +128,10 @@ private async processPokemon(details) {
         });
 
         await this.pokemonRepository.save(newPokemon);
-        console.log(`🆕 Insertado: ${details.name} -> Categoría: ${category} -> Precio: $${price.toFixed(2)} USD`);
+        console.log(`🆕 Inserted: ${details.name} -> Category: ${category} -> Price: $${price.toFixed(2)} USD`);
 
     } catch (error) {
-        console.error(`❌ Error procesando ${details.name}:`, error.message);
+        console.error(`❌ Error processing ${details.name}:`, error.message);
     }
-}
+  }
 }
