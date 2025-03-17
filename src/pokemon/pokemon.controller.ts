@@ -2,11 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Role } from 'src/auth/enum/rol.enum';
 
 @Controller('pokemon')
 export class PokemonController {
   constructor(private readonly pokemonService: PokemonService) { }
 
+  @Auth([Role.ADMIN])
   @Post()
   create(@Body() createPokemonDto: CreatePokemonDto) {
     return this.pokemonService.create(createPokemonDto);
@@ -38,11 +41,13 @@ export class PokemonController {
     return this.pokemonService.findOne(+id);
   }
 
+  @Auth([Role.ADMIN])
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {
     return this.pokemonService.update(+id, updatePokemonDto);
   }
 
+  @Auth([Role.ADMIN])
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.pokemonService.remove(+id);
