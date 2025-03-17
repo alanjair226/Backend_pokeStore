@@ -20,6 +20,7 @@ export class OrdersService {
 
   // 🔹 Crear una nueva orden
   async createOrder(userId: number, cardId: number) {
+
     const cart = await this.cartService.getCart(userId); // 🔥 Usamos CartService para obtener el carrito
 
     if (!cart || cart.items.length === 0) {

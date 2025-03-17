@@ -28,7 +28,10 @@ export class CartService {
 
     // 🔹 Obtener el carrito de un usuario con sus items
     async getCart(userId: number) {
-        return await validate(userId, 'user', this.cartRepository);
+        return await this.cartRepository.findOne({
+            where: { user: { id: userId } },  // 🔥 Buscar el carrito por `user.id`
+            relations: ['items', 'items.pokemon', 'items.pokeball'],  // 🔥 Cargar los `CartItems` y sus relaciones
+        });
     }
 
     // 🔹 Obtener todos los carritos (solo para pruebas/debug)

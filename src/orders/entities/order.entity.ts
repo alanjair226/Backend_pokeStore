@@ -9,7 +9,7 @@ export class Order {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, user => user.orders)
+    @ManyToOne(() => User, user => user.orders, {eager:true})
     user: User;
 
     @ManyToOne(() => Card, { nullable: false })
