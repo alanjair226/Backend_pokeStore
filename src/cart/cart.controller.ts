@@ -1,6 +1,9 @@
 import { Body, Controller, Get, Post, Delete, Param, Patch } from '@nestjs/common';
 import { CartService } from './cart.service';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Role } from 'src/auth/enum/rol.enum';
 
+@Auth([Role.ADMIN, Role.USER])
 @Controller('cart')
 export class CartController {
     constructor(private readonly cartService: CartService) {}
