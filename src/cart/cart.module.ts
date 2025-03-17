@@ -8,13 +8,14 @@ import { UsersModule } from 'src/users/users.module';
 import { CartItem } from './entities/cart-item.entity';
 import { PokeballsModule } from 'src/pokeballs/pokeballs.module';
 import { PokemonModule } from 'src/pokemon/pokemon.module';
+import { CardsModule } from 'src/cards/cards.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Cart, CartItem]),
     UsersModule,
     PokeballsModule,
-    PokemonModule
+    PokemonModule,
   ],
   controllers: [CartController],
   providers: [CartService],

@@ -15,7 +15,7 @@ export class Order {
     @ManyToOne(() => Card, { nullable: false })
     card: Card;
 
-    @OneToMany(() => OrderItem, orderItem => orderItem.order, { cascade: true })
+    @OneToMany(() => OrderItem, orderItem => orderItem.order, { cascade: true, eager: true })
     items: OrderItem[];
 
     @Column({ type: "decimal" })
