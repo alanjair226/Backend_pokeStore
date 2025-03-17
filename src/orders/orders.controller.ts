@@ -10,7 +10,7 @@ export class OrdersController {
 
   @Post()
   async createOrder(@Req() req, @Body() body: { user: number, card: number }) {
-    const loggedInUserId = req.user.userId; // Obtenemos el ID del usuario autenticado desde el token
+    const loggedInUserId = req.user.userId; 
 
     if (loggedInUserId !== body.user) {
       throw new UnauthorizedException('you can not create an order to another user');
@@ -20,10 +20,12 @@ export class OrdersController {
 
   @Get(':userId')
   findAll(@Req() req, @Param('userId') userId: number) {
-    const loggedInUserId = req.user.userId; // Obtenemos el ID del usuario autenticado desde el token
+    const loggedInUserId = req.user.userId; 
 
-    if (loggedInUserId !== userId) {
-      throw new UnauthorizedException('you can not get orders from another user');
+    const userRole = req.user.role;
+
+    if (userRole !== Role.ADMIN && loggedInUserId !== userId) {
+      throw new UnauthorizedException('You cannot get orders from another user');
     }
     return this.ordersService.findAll(userId);
   }
@@ -32,10 +34,11 @@ export class OrdersController {
   async findOne(@Req() req, @Param('id') id: number) {
     const order = await this.ordersService.findOne(id)
 
-    const loggedInUserId = req.user.userId; // Obtenemos el ID del usuario autenticado desde el token
+    const loggedInUserId = req.user.userId; 
+    const userRole = req.user.role;
 
-    if (loggedInUserId !== order.user.id) {
-      throw new UnauthorizedException('you can not get an order from another user');
+    if (userRole !== Role.ADMIN && loggedInUserId !== order.user.id) {
+      throw new UnauthorizedException('You cannot get orders from another user');
     }
     
 

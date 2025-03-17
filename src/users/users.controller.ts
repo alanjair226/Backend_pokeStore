@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -17,7 +17,13 @@ export class UsersController {
 
   @Auth([Role.ADMIN, Role.USER])
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Req() req, @Param('id') id: number) {
+    const loggedInUserId = req.user.userId;
+    const userRole = req.user.role;
+
+    if (userRole !== Role.ADMIN && loggedInUserId !== id) {
+      throw new UnauthorizedException('you can not get another user');
+    }
     return this.usersService.findOne(id);
   }
 
