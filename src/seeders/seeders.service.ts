@@ -22,13 +22,25 @@ export class SeedersService {
     const items = response.data.items;
 
     const multipliers: { [key: string]: number } = {
-        "master-ball": 20.0, "ultra-ball": 2.0, "great-ball": 1.5, "poke-ball": 1.0,
-        "safari-ball": 1.5, "park-ball": 20.0, "sport-ball": 1.5, "lastrange-ball": 1.2,
-        "lapoke-ball": 1.2, "lagreat-ball": 1.5, "laultra-ball": 2.0, 
-        "laheavy-ball": 3.0, "laleaden-ball": 4.0, "lagigaton-ball": 5.0,
-        "lafeather-ball": 2.5, "lawing-ball": 3.0, "lajet-ball": 3.5,
-        "laorigin-ball": 20.0
-    };
+        "master-ball": 5.0,
+        "ultra-ball": 2.0,
+        "great-ball": 1.5,
+        "poke-ball": 1.0,
+        "safari-ball": 1.5,
+        "park-ball": 2.0,
+        "sport-ball": 1.5,
+        "lastrange-ball": 1.5,
+        "lapoke-ball": 1.5,
+        "lagreat-ball": 1.8,
+        "laultra-ball": 2.5,
+        "laheavy-ball": 2.5,
+        "laleaden-ball": 3.0,
+        "lagigaton-ball": 3.5,
+        "lafeather-ball": 2.5,
+        "lawing-ball": 3.0,
+        "lajet-ball": 3.5,
+        "laorigin-ball": 10.0
+      };
 
     for (const item of items) {
         const details = await axios.get(item.url);
