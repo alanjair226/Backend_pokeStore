@@ -63,7 +63,7 @@ export class SeedersService {
     return { message: 'Pokeballs Inserted' };
   }
 
-  async pokemonSeeder(batchSize: number = 50) {
+  async pokemonSeeder(batchSize: number = 10) {
     const response = await axios.get(`${urlPokeAPI}pokemon?limit=100000`); // Get all Pokemons in one request
     const pokemonList = response.data.results;
 
@@ -107,18 +107,41 @@ export class SeedersService {
         if (isLegendary) category = "legendary";
         if (isMythical) category = "mythical";
 
-        // Price Calculate
+        // Price Calculation
         let price = (baseExperience * 0.1) + (statsTotal / 10);
-        if (isLegendary || isMythical) price += 200;
 
-        // Verify Pokemon
+        // Adjust price for Legendary and Mythical Pokémon
+        if (isLegendary) {
+            price += 100;  // Slightly higher increase for Legendary Pokémon
+        }
+        if (isMythical) {
+            price += 200;  // Higher increase for Mythical Pokémon
+        }
+
+        // Adjust price for normal Pokémon
+        if (category === "normal") {
+            price -= 20;  // Decrease $20 for normal Pokémon
+            price = Math.max(price, 10);  // Ensure the price doesn't go below $10
+        }
+
+        // Cap the maximum price increase for legendary/mythical Pokémon
+        if (isLegendary || isMythical) price = Math.min(price, 500); // Limit maximum price for legendary/mythical Pokémon to $500
+
+        // Verify Pokémon
         const existingPokemon = await this.pokemonRepository.findOne({ where: { name: details.name } });
 
         if (existingPokemon) {
-            console.log(`✅ ${details.name} already exists in the database, skipping...`);
+            // Check if the price is different and update if necessary
+            if (existingPokemon.base_price !== price) {
+                await this.pokemonRepository.update(existingPokemon.id, { base_price: parseFloat(price.toFixed(2)) });
+                console.log(`✔️ Updated: ${details.name} -> New Price: $${price.toFixed(2)} USD`);
+            } else {
+                console.log(`✅ No Changes: ${details.name} already has the correct price.`);
+            }
             return;
         }
 
+        // If the Pokémon doesn't exist, insert it as new
         const newPokemon = this.pokemonRepository.create({
             name: details.name,
             sprite: details.sprites.front_default,
@@ -133,5 +156,7 @@ export class SeedersService {
     } catch (error) {
         console.error(`❌ Error processing ${details.name}:`, error.message);
     }
-  }
+}
+
+
 }
