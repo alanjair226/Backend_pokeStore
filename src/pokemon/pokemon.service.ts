@@ -45,6 +45,8 @@ export class PokemonService {
     if (search) {
       query.andWhere("pokemon.name ILIKE :search", { search: `%${search}%` });
     }
+
+    query.orderBy("pokemon.id", "ASC");
   
     const [pokemons, total] = await query
       .take(limit)
