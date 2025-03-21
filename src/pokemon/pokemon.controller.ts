@@ -21,19 +21,22 @@ export class PokemonController {
   }
 
   @Get('pagination')
-  async findAllPagination(
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
-    @Query('type') type?: string,
-    @Query('category') category?: string
-  ) {
-    return this.pokemonService.findAllPagination(
-      Number(page) || 1,
-      Number(limit) || 20,
-      type,
-      category
-    );
-  }
+async findAllPagination(
+  @Query('page') page?: number,
+  @Query('limit') limit?: number,
+  @Query('type') type?: string,
+  @Query('category') category?: string,
+  @Query('search') search?: string
+) {
+  return this.pokemonService.findAllPagination(
+    Number(page) || 1,
+    Number(limit) || 20,
+    type,
+    category,
+    search
+  );
+}
+
 
 
   @Get(':id')

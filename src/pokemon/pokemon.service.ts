@@ -25,26 +25,32 @@ export class PokemonService {
     page: number,
     limit: number,
     type?: string,
-    category?: string
+    category?: string,
+    search?: string 
   ) {
     if (page < 1) page = 1;
     if (limit < 1) limit = 20;
-
+  
     const query = this.pokemonRepository.createQueryBuilder("pokemon");
-
+  
     if (type) {
       query.andWhere(":type = ANY (pokemon.types)", { type });
     }
-
+  
     if (category) {
       query.andWhere("pokemon.category = :category", { category });
     }
-
+    
+    // If search is provided, filter by name using a case-insensitive match
+    if (search) {
+      query.andWhere("pokemon.name ILIKE :search", { search: `%${search}%` });
+    }
+  
     const [pokemons, total] = await query
       .take(limit)
       .skip((page - 1) * limit)
       .getManyAndCount();
-
+  
     return {
       data: pokemons,
       currentPage: page,
@@ -52,6 +58,7 @@ export class PokemonService {
       totalItems: total
     };
   }
+  
 
 
 
