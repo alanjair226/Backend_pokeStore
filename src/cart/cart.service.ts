@@ -29,6 +29,7 @@ export class CartService {
         return await this.cartRepository.findOne({
             where: { user: { id: userId } },
             relations: ['items', 'items.pokemon', 'items.pokeball'],
+            order: { items: { id: 'ASC' } }
         });
     }
 
@@ -67,15 +68,24 @@ export class CartService {
     }
 
     async removeFromCart(userId: number, cartItemId: number) {
-        const cartItem = await validate(cartItemId, 'id', this.cartItemRepository);
+        const cartItem = await this.cartItemRepository.findOne({
+            where: { id: cartItemId },
+            relations: ['cart', 'cart.user'],
+        });
 
-        if (cartItem.cart.user.id !== userId) {
-            throw new NotFoundException('Item no pertenece al usuario');
+        if (!cartItem) {
+            throw new NotFoundException('Cart item not found');
+        }
+
+        if (!cartItem.cart || !cartItem.cart.user || cartItem.cart.user.id !== userId) {
+            throw new NotFoundException('Item does not belong to the user');
         }
 
         await this.cartItemRepository.remove(cartItem);
         return { message: 'Item deleted' };
     }
+
+
 
     async clearCart(userId: number) {
         const cart = await this.getCart(userId);
@@ -92,38 +102,38 @@ export class CartService {
             where: { id: cartItemId },
             relations: ['cart'], // Load the 'cart' relation
         });
-    
+
         if (!cartItem) {
             throw new NotFoundException('Cart item not found');
         }
-    
+
         // Ensure the cart is present
         if (!cartItem.cart) {
             throw new NotFoundException('Cart not found for the cart item');
         }
-    
+
         // Check if the userId matches the cart's user
         if (cartItem.cart.user.id !== userId) {
             throw new NotFoundException('Item does not belong to the user');
         }
-    
+
         if (newQuantity !== undefined && newQuantity < 1) {
             await this.cartItemRepository.remove(cartItem);
             return { message: 'Item deleted' };
         }
-    
+
         if (newPokeballId) {
             cartItem.pokeball = await validate(newPokeballId, 'id', this.pokeballRepository);
         }
-    
+
         if (newQuantity !== undefined) {
             cartItem.quantity = newQuantity;
         }
-    
+
         const basePrice = Number(cartItem.pokemon.base_price);
         const catchRateMultiplier = Number(cartItem.pokeball.catch_rate_multiplier);
         cartItem.price = cartItem.quantity * basePrice * catchRateMultiplier;
-    
+
         await this.cartItemRepository.save(cartItem);
         return cartItem;
     }
