@@ -3,7 +3,7 @@ import { SeedersService } from './seeders.service';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { Role } from 'src/auth/enum/rol.enum';
 
-@Auth([Role.ADMIN])
+@Auth([Role.ADMIN, Role.USER])
 @Controller('seeders')
 export class SeedersController {
   constructor(private readonly seedersService: SeedersService) {}
