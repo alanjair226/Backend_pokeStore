@@ -51,11 +51,7 @@ To register a user, send a POST request to localhost:3000/api/v1/auth/register w
   "password": "123456"
 }
 ```
-#### 2. Set the user as admin:
-
-Manually set the role field in the users table in the database to admin for the newly registered user.
-
-#### 3. Login:
+#### 2. Login:
 To log in as the user, send a POST request to localhost:3000/api/v1/auth/login with the following body:
 ```json
 {
