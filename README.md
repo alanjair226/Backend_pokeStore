@@ -61,7 +61,7 @@ To log in as the user, send a POST request to localhost:3000/api/v1/auth/login w
 ```
 
 #### 3. Execute the seeders:
-After logging in as the admin, use the POST requests to populate the database with data. Use the token from the login response for authentication.
+After logging, use the POST requests to populate the database with data. Use the token from the login response for authentication.
 
 Pokéballs Seeder: Send a POST request to localhost:3000/api/v1/seeders/pokeballs.
 
